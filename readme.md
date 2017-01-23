@@ -27,3 +27,5 @@ When you're finished press create, and your files will be transcoded, and a torr
 ###Notes:
 
 This is very much a work in progress! If you find any bugs or have any feature requests, please let me know about them [on the issues page.](https://github.com/flare561/Rippy/issues)
+
+There are a couple outstanding issues, so check if yours is already present before creating a new issue.
