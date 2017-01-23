@@ -1,0 +1,307 @@
+﻿<Window x:Class="Rippy.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Rippy"
+        xmlns:properties="clr-namespace:Rippy.Properties"
+        mc:Ignorable="d"
+        Title="Rippy 2.0" Height="352" Width="524"
+        Name="mainWindow" Icon="./rippy.ico">
+    <Window.Resources>
+        <Storyboard x:Key="sbShowLeftMenu" >
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="-524,0,0,0" To="0,0,0,0" DecelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+        <Storyboard x:Key="sbHideLeftMenu">
+            <ThicknessAnimation Storyboard.TargetProperty="Margin" From="0,0,0,0" To="-524,0,0,0" AccelerationRatio=".9" Duration="0:0:1" />
+        </Storyboard>
+        <Style x:Key="LinkButton" TargetType="Button">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <TextBlock >
+                            <ContentPresenter />
+                        </TextBlock>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Cursor" Value="Hand" />
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="true">
+                    <Setter Property="Foreground" Value="Red" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="0,0,0,0">
+        <Button Panel.ZIndex="3" x:Name="settingsBtn" Content="Settings ⚙️" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Margin="440,6,0,0" VerticalAlignment="Top" Width="64" Click="settingsBtn_Click" IsEnabled="False" Visibility="Hidden"/>
+        <StackPanel Panel.ZIndex="2" Name="pnlLeftMenu" Orientation="Horizontal" HorizontalAlignment="Left" Margin="-524,0,0,0" IsEnabled="False">
+            <Border BorderBrush="#444444" BorderThickness="1" Width="524" Background="#444444" >
+                <Grid>
+                    <TextBox Name="dbPowerAmpTbx" Margin="10,37,0,0" HorizontalAlignment="Left" Width="303" Height="23" VerticalAlignment="Top" Text="{Binding Source={x:Static properties:Settings.Default},Path=DBPowerampLocation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.ToolTip>
+                            dBpoweramp coreconverter.exe Location
+                        </TextBox.ToolTip>
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <Style.Resources>
+                                    <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None" >
+                                        <VisualBrush.Visual>
+                                            <Label Content="dBpoweramp coreconverter.exe Location" Foreground="Gray" Background="White" Width="303" Height="23"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <Button x:Name="dbBrowseBtn" Content="Browse" HorizontalAlignment="Left" Margin="318,37,0,0" VerticalAlignment="Top" Width="70" Height="23"/>
+                    <TextBox Name="mp3TagTbx" Margin="10,65,0,0" HorizontalAlignment="Left" Width="303" Height="23" VerticalAlignment="Top" Text="{Binding Source={x:Static properties:Settings.Default},Path=MP3TagLocation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.ToolTip>
+                            Mp3tag.exe Location
+                        </TextBox.ToolTip>
+                        <TextBox.Style>
+                            <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <Style.Resources>
+                                    <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None" >
+                                        <VisualBrush.Visual>
+                                            <Label Content="Mp3tag.exe Location" Foreground="Gray" Background="White" Width="303" Height="23"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <Button x:Name="mp3TagBrowseBtn" Content="Browse" HorizontalAlignment="Left" Margin="318,65,0,0" VerticalAlignment="Top" Width="70" Height="23"/>
+                </Grid>
+            </Border>
+        </StackPanel>
+        <Grid Name="MainWindowGrid">
+            <Label Content="Flac Folder" HorizontalAlignment="Left" Margin="9,6,0,0" VerticalAlignment="Top"/>
+            <TextBox Name="FlacFolderTbx" Margin="10,37,0,0" HorizontalAlignment="Left" Width="338" Height="23" VerticalAlignment="Top" Text="{Binding Path=FlacFolder, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" TextChanged="FlacFolder_TextChanged">
+                <TextBox.Style>
+                    <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Flac Folder" Foreground="Gray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <Button x:Name="browseBtn" Content="Browse" HorizontalAlignment="Left" Margin="353,37,0,0" VerticalAlignment="Top" Width="70" Height="23" Click="browseBtn_Click"/>
+            <Button x:Name="metadataBtn" Content="Set Metadata" HorizontalAlignment="Left" Margin="428,37,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="metadataBtn_Click"/>
+            <Label Content="File Info" HorizontalAlignment="Left" Margin="10,65,0,0" VerticalAlignment="Top"/>
+            <TextBox Margin="10,91,0,0" HorizontalAlignment="Left" Width="327" Height="23" VerticalAlignment="Top" Text="{Binding Path=Artist, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Style>
+                    <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Artist" Foreground="Gray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <TextBox Margin="342,91,0,0" HorizontalAlignment="Left" Width="78" Height="23" VerticalAlignment="Top" Text="{Binding Path=Year, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Style>
+                    <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Year" Foreground="Gray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <TextBox Margin="425,91,0,0" HorizontalAlignment="Left" Width="78" Height="23" VerticalAlignment="Top" Text="{Binding Medium, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Style>
+                    <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Medium" Foreground="Gray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <TextBox Margin="10,119,0,0" HorizontalAlignment="Left" Width="327" Height="23" VerticalAlignment="Top" Text="{Binding Path=Album, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Style>
+                    <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Album" Foreground="Gray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <TextBox Margin="342,119,0,0" HorizontalAlignment="Left" Width="78" Height="23" VerticalAlignment="Top" Text="{Binding Path=Publisher, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Style>
+                    <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Publisher" Foreground="Gray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <TextBox Margin="425,119,0,0" HorizontalAlignment="Left" Width="78" Height="23" VerticalAlignment="Top" Text="{Binding Path=Number, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                <TextBox.Style>
+                    <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Number" Foreground="Gray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <Label Content="Preview" HorizontalAlignment="Left" Margin="9,147,0,0" VerticalAlignment="Top"/>
+            <TextBox Margin="10,178,0,0" HorizontalAlignment="Left" Width="493" Height="23" VerticalAlignment="Top" Text="{Binding Path=MP3320, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False">
+                <TextBox.Style>
+                    <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                        <Style.Resources>
+                            <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None">
+                                <VisualBrush.Visual>
+                                    <Label Content="Output Folder" Foreground="Gray" />
+                                </VisualBrush.Visual>
+                            </VisualBrush>
+                        </Style.Resources>
+                        <Style.Triggers>
+                            <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="Text" Value="{x:Null}">
+                                <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter Property="Background" Value="White" />
+                            </Trigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBox.Style>
+            </TextBox>
+            <Label Content="Tracker" HorizontalAlignment="Left" Margin="10,206,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.558,2.439"/>
+            <ComboBox x:Name="trackersCobx" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="494" ItemsSource="{Binding Path=SettingsObj.Trackers, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Path=Tracker, UpdateSourceTrigger=PropertyChanged}"/>
+            <CheckBox x:Name="mp3320Cbx" Content="MP3 320" HorizontalAlignment="Left" Margin="256,264,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=MP3320, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+            <CheckBox x:Name="mp3V0Cbx" Content="MP3 V0" HorizontalAlignment="Left" Margin="327,264,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=MP3V0, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+            <CheckBox x:Name="mp3V2Cbx" Content="MP3 V2" HorizontalAlignment="Left" Margin="392,264,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=MP3V2, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+            <CheckBox x:Name="flacCbx" Content="FLAC" HorizontalAlignment="Left" Margin="457,264,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=FLAC, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
+            <Button x:Name="createBtn" Content="Create" HorizontalAlignment="Left" Margin="429,284,0,0" VerticalAlignment="Top" Width="75" Click="createBtn_Click"/>
+        </Grid>
+    </Grid>
+</Window>
