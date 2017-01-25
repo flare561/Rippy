@@ -34,11 +34,12 @@
         </Style>
     </Window.Resources>
     <Grid Margin="0,0,0,0">
-        <Button Panel.ZIndex="3" x:Name="settingsBtn" Content="Settings ⚙️" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Margin="440,6,0,0" VerticalAlignment="Top" Width="64" Click="settingsBtn_Click" IsEnabled="False" Visibility="Hidden"/>
+        <Button Panel.ZIndex="3" x:Name="settingsBtn" Content="Settings ⚙️" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Margin="440,6,0,0" VerticalAlignment="Top" Width="64" Click="settingsBtn_Click" />
         <StackPanel Panel.ZIndex="2" Name="pnlLeftMenu" Orientation="Horizontal" HorizontalAlignment="Left" Margin="-524,0,0,0" IsEnabled="False">
-            <Border BorderBrush="#444444" BorderThickness="1" Width="524" Background="#444444" >
+            <Border BorderBrush="#444444" BorderThickness="1" Width="524" Background="#777777" >
                 <Grid>
-                    <TextBox Name="dbPowerAmpTbx" Margin="10,37,0,0" HorizontalAlignment="Left" Width="303" Height="23" VerticalAlignment="Top" Text="{Binding Source={x:Static properties:Settings.Default},Path=DBPowerampLocation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                    <Label Content="dBPoweramp coreconverter.exe Location" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top"/>
+                    <TextBox Name="dbPowerAmpTbx" Margin="10,36,0,0" HorizontalAlignment="Left" Width="303" Height="23" VerticalAlignment="Top" Text="{Binding Source={x:Static properties:Settings.Default},Path=DBPowerampLocation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.ToolTip>
                             dBpoweramp coreconverter.exe Location
                         </TextBox.ToolTip>
@@ -65,8 +66,10 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <Button x:Name="dbBrowseBtn" Content="Browse" HorizontalAlignment="Left" Margin="318,37,0,0" VerticalAlignment="Top" Width="70" Height="23"/>
-                    <TextBox Name="mp3TagTbx" Margin="10,65,0,0" HorizontalAlignment="Left" Width="303" Height="23" VerticalAlignment="Top" Text="{Binding Source={x:Static properties:Settings.Default},Path=MP3TagLocation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                    <Button x:Name="dbBrowseBtn" Content="Browse" HorizontalAlignment="Left" Margin="318,36,0,0" VerticalAlignment="Top" Width="70" Height="23" Click="dbBrowseBtn_Click"/>
+
+                    <Label Content="Mp3tag.exe Location" HorizontalAlignment="Left" Margin="10,64,0,0" VerticalAlignment="Top"/>
+                    <TextBox Name="mp3TagTbx" Margin="10,90,0,0" HorizontalAlignment="Left" Width="303" Height="23" VerticalAlignment="Top" Text="{Binding Source={x:Static properties:Settings.Default},Path=MP3TagLocation,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                         <TextBox.ToolTip>
                             Mp3tag.exe Location
                         </TextBox.ToolTip>
@@ -93,7 +96,86 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <Button x:Name="mp3TagBrowseBtn" Content="Browse" HorizontalAlignment="Left" Margin="318,65,0,0" VerticalAlignment="Top" Width="70" Height="23"/>
+                    <Button x:Name="mp3TagBrowseBtn" Content="Browse" HorizontalAlignment="Left" Margin="318,90,0,0" VerticalAlignment="Top" Width="70" Height="23" Click="mp3TagBrowseBtn_Click"/>
+                    <Label Content="Output Directory" HorizontalAlignment="Left" Margin="10,118,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="outputTbx" Margin="10,144,0,0" HorizontalAlignment="Left" Width="184" Height="23" VerticalAlignment="Top" Text="{Binding OutputDirectory, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.ToolTip>Output Directory</TextBox.ToolTip>
+                        <TextBox.Style>
+                            <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                                <Style.Resources>
+                                    <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None" >
+                                        <VisualBrush.Visual>
+                                            <Label Content="Output Directory" Foreground="Gray" Background="White" Width="303" Height="23"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <Label Content="Torrent Directory" HorizontalAlignment="Left" Margin="204,118,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="torrentTbx" Margin="204,144,0,0" HorizontalAlignment="Left" Width="184" Height="23" VerticalAlignment="Top" Text="{Binding TorrentDirectory, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}">
+                        <TextBox.ToolTip>Torrent Directory</TextBox.ToolTip>
+                        <TextBox.Style>
+                            <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                                <Style.Resources>
+                                    <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None" >
+                                        <VisualBrush.Visual>
+                                            <Label Content="Torrent Directory" Foreground="Gray" Background="White" Width="303" Height="23"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <Label Content="Trackers" HorizontalAlignment="Left" Margin="10,172,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="trackersTbx" Margin="10,203,0,0" HorizontalAlignment="Left" Width="378" Height="22" VerticalAlignment="Top" Text="{Binding TrackersString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="trackersTbx_TextChanged">
+                        <TextBox.ToolTip>Trackers (Separate multiple trackers with a comma)</TextBox.ToolTip>
+                        <TextBox.Style>
+                            <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                                <Style.Resources>
+                                    <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None" >
+                                        <VisualBrush.Visual>
+                                            <Label Content="Trackers" Foreground="Gray" Background="White" Width="378" Height="23"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <Button x:Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="313,230,0,0" VerticalAlignment="Top" Width="75" Click="saveBtn_Click"/>
                 </Grid>
             </Border>
         </StackPanel>
@@ -296,7 +378,7 @@
                 </TextBox.Style>
             </TextBox>
             <Label Content="Tracker" HorizontalAlignment="Left" Margin="10,206,0,0" VerticalAlignment="Top" RenderTransformOrigin="0.558,2.439"/>
-            <ComboBox x:Name="trackersCobx" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="494" ItemsSource="{Binding Path=SettingsObj.Trackers, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" SelectedItem="{Binding Path=Tracker, UpdateSourceTrigger=PropertyChanged}"/>
+            <ComboBox x:Name="trackersCobx" HorizontalAlignment="Left" Margin="10,237,0,0" VerticalAlignment="Top" Width="494" ItemsSource="{Binding Path=Trackers, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Tracker, UpdateSourceTrigger=PropertyChanged}"/>
             <CheckBox x:Name="mp3320Cbx" Content="MP3 320" HorizontalAlignment="Left" Margin="256,264,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=MP3320, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
             <CheckBox x:Name="mp3V0Cbx" Content="MP3 V0" HorizontalAlignment="Left" Margin="327,264,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=MP3V0, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>
             <CheckBox x:Name="mp3V2Cbx" Content="MP3 V2" HorizontalAlignment="Left" Margin="392,264,0,0" VerticalAlignment="Top" IsChecked="{Binding Path=MP3V2, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}"/>

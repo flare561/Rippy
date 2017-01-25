@@ -14,12 +14,8 @@
     <Setting Name="TorrentDirectory" Type="System.String" Scope="User">
       <Value Profile="(Default)">.\Torrents\</Value>
     </Setting>
-    <Setting Name="Trackers" Type="System.Collections.Specialized.StringCollection" Scope="User">
-      <Value Profile="(Default)">&lt;?xml version="1.0" encoding="utf-16"?&gt;
-&lt;ArrayOfString xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"&gt;
-  &lt;string&gt;https://example.com/stuff/announce&lt;/string&gt;
-  &lt;string&gt;https://example2.com/stuff2/announce&lt;/string&gt;
-&lt;/ArrayOfString&gt;</Value>
+    <Setting Name="Trackers" Type="System.String" Scope="User">
+      <Value Profile="(Default)">https://example1.com/stuff/announce,https://example2.com/stuff2/announce</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -65,6 +65,17 @@ namespace Rippy
             set { _medium = value; OnPropertyChanged("Medium"); }
         }
 
+        public List<string> Trackers
+        {
+            get { return Rippy.Properties.Settings.Default.Trackers.Split(',').ToList(); }
+        }
+
+        public string TrackersString
+        {
+            get { return Rippy.Properties.Settings.Default.Trackers; }
+            set { Rippy.Properties.Settings.Default.Trackers = value; OnPropertyChanged("Trackers"); OnPropertyChanged("TrackersString"); }
+        }
+
         public string Tracker
         {
             get { return _tracker; }

@@ -106,7 +106,6 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="HelperMethods.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="SourcedTorrentCreator.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

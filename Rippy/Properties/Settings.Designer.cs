@@ -73,14 +73,10 @@ namespace Rippy.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute(@"<?xml version=""1.0"" encoding=""utf-16""?>
-<ArrayOfString xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"" xmlns:xsd=""http://www.w3.org/2001/XMLSchema"">
-  <string>https://example.com/stuff/announce</string>
-  <string>https://example2.com/stuff2/announce</string>
-</ArrayOfString>")]
-        public global::System.Collections.Specialized.StringCollection Trackers {
+        [global::System.Configuration.DefaultSettingValueAttribute("https://example1.com/stuff/announce,https://example2.com/stuff2/announce")]
+        public string Trackers {
             get {
-                return ((global::System.Collections.Specialized.StringCollection)(this["Trackers"]));
+                return ((string)(this["Trackers"]));
             }
             set {
                 this["Trackers"] = value;

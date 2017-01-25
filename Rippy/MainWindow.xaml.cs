@@ -44,15 +44,13 @@ namespace Rippy
         public bool MP3V0 { get; set; } = true;
         public bool MP3V2 { get; set; } = false;
         public bool FLAC { get; set; } = false;
-        public Settings SettingsObj { get; set; }
 
         public MainWindow()
         {
             InitializeComponent();
             _albumData = new AlbumData();
             DataContext = _albumData;
-            SettingsObj = Settings.Load();
-            _albumData.Tracker = SettingsObj.Trackers[0];
+            _albumData.Tracker = _albumData.Trackers[0];
             _createProgressDialog.DoWork += _createProgressDialog_DoWork;
             _createProgressDialog.RunWorkerCompleted += _createProgressDialog_RunWorkerCompleted;
         }
@@ -64,12 +62,12 @@ namespace Rippy
         /// <param name="name"></param>
         private void CreateFolder(string name)
         {
-            if (!Directory.Exists(SettingsObj.OutputDirectory))
-                Directory.CreateDirectory(SettingsObj.OutputDirectory);
-            if (!Directory.Exists(SettingsObj.TorrentDirectory))
-                Directory.CreateDirectory(SettingsObj.TorrentDirectory);
+            if (!Directory.Exists(Rippy.Properties.Settings.Default.OutputDirectory))
+                Directory.CreateDirectory(Rippy.Properties.Settings.Default.OutputDirectory);
+            if (!Directory.Exists(Rippy.Properties.Settings.Default.TorrentDirectory))
+                Directory.CreateDirectory(Rippy.Properties.Settings.Default.TorrentDirectory);
 
-            Directory.CreateDirectory(Path.Combine(SettingsObj.OutputDirectory, name));
+            Directory.CreateDirectory(Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name));
         }
 
         /// <summary>
@@ -113,7 +111,7 @@ namespace Rippy
                 {
                     var convProc = new Process
                     {
-                        StartInfo = new ProcessStartInfo(SettingsObj.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" -convert_to\"mp3 (Lame)\" {dbargs}")
+                        StartInfo = new ProcessStartInfo(Rippy.Properties.Settings.Default.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" -convert_to\"mp3 (Lame)\" {dbargs}")
                         {
                             CreateNoWindow = true,
                             WindowStyle = ProcessWindowStyle.Hidden
@@ -139,14 +137,14 @@ namespace Rippy
             tc.Private = true;
             tc.Announces.Add(new List<string>() { _albumData.Tracker });
             tc.Source = "PTH";
-            tc.Create(new TorrentFileSource(directory), Path.Combine(SettingsObj.TorrentDirectory, $"{name}.torrent"));
+            tc.Create(new TorrentFileSource(directory), Path.Combine(Rippy.Properties.Settings.Default.TorrentDirectory, $"{name}.torrent"));
         }
         
 
         private bool ProcessDirectory(string name, string dbargs, int totalFiles)
         {
             CreateFolder(name);
-            var directory = Path.Combine(SettingsObj.OutputDirectory, name);
+            var directory = Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name);
             CopyFiles(directory);
             if (!TranscodeFiles(directory, dbargs, totalFiles))
                 return false;
@@ -194,7 +192,7 @@ namespace Rippy
         private async void metadataBtn_Click(object sender, RoutedEventArgs e)
         {
             mainWindow.IsEnabled = false;
-            await HelperMethods.RunProcessAsync(SettingsObj.MP3TagLocation, $"\"{_albumData.FlacFolder}\"");
+            await HelperMethods.RunProcessAsync(Rippy.Properties.Settings.Default.MP3TagLocation, $"\"{_albumData.FlacFolder}\"");
             mainWindow.IsEnabled = true;
             UpdateMetadata();
         }
@@ -252,6 +250,32 @@ namespace Rippy
                 MainWindowGrid.IsEnabled = false;
             }
         }
-        
+
+        private void dbBrowseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Ookii.Dialogs.Wpf.VistaOpenFileDialog();
+            dialog.FileName = _albumData.FlacFolder;
+            var result = dialog.ShowDialog();
+            Rippy.Properties.Settings.Default.DBPowerampLocation = dialog.FileName;
+        }
+
+        private void mp3TagBrowseBtn_Click(object sender, RoutedEventArgs e)
+        {
+
+            var dialog = new Ookii.Dialogs.Wpf.VistaOpenFileDialog();
+            dialog.FileName = _albumData.FlacFolder;
+            var result = dialog.ShowDialog();
+            Rippy.Properties.Settings.Default.MP3TagLocation = dialog.FileName;
+        }
+
+        private void saveBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Rippy.Properties.Settings.Default.Save();
+        }
+
+        private void trackersTbx_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            trackersCobx?.GetBindingExpression(ComboBox.ItemsSourceProperty)?.UpdateSource();
+        }
     }
 }
