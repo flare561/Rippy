@@ -67,7 +67,7 @@ namespace Rippy
 
         public List<string> Trackers
         {
-            get { return Rippy.Properties.Settings.Default.Trackers.Split(',').ToList(); }
+            get { return Properties.Settings.Default.Trackers.Split(',').ToList(); }
         }
 
         public string TrackersString
@@ -106,10 +106,7 @@ namespace Rippy
 
         private string FormatFolderName(string format)
         {
-                if (!string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number))
-                    return $"{Artist} - {Album} ({Year}) [{Publisher} {Number}] [{Medium} {format}]";
-                else
-                    return $"{Artist} - {Album} ({Year}) [{Medium} {format}]";
+                    return $"{Artist} - {Album} ({Year}) {(!string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"[{Publisher} {Number}] " : "")}[{(!string.IsNullOrWhiteSpace(Medium) ? $"{Medium} " : "")}{format}]";
         }
     }
 }
