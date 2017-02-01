@@ -133,10 +133,10 @@ namespace Rippy
 
         private void CreateTorrent(string directory, string name)
         {
-            var tc = new SourcedTorrentCreator();
+            var tc = new TorrentCreator();
             tc.Private = true;
             tc.Announces.Add(new List<string>() { _albumData.Tracker });
-            tc.Source = "PTH";
+            tc.AddCustomInfo(new MonoTorrent.BEncoding.BEncodedString("source"), new MonoTorrent.BEncoding.BEncodedString("PTH"));
             tc.Create(new TorrentFileSource(directory), Path.Combine(Rippy.Properties.Settings.Default.TorrentDirectory, $"{name}.torrent"));
         }
         

@@ -106,7 +106,9 @@ namespace Rippy
 
         private string FormatFolderName(string format)
         {
-                    return $"{Artist} - {Album} ({Year}) {(!string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"[{Publisher} {Number}] " : "")}[{(!string.IsNullOrWhiteSpace(Medium) ? $"{Medium} " : "")}{format}]";
+            var pubNum = !string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"[{Publisher} {Number}] " : "";
+            var medium = !string.IsNullOrWhiteSpace(Medium) ? $"{Medium} " : "";
+            return $"{Artist} - {Album} ({Year}) {pubNum}[{medium}{format}]";
         }
     }
 }
