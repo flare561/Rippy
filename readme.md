@@ -8,11 +8,7 @@ Download the latest version from [the releases page](https://github.com/flare561
 Usage
 -----
 
-This program uses MP3 Tag and dBpoweramp, the locations for these are currently defined in settings.json
-
-If settings.json does not exist for you, run the program once, then close it and ensure the settings are correct.
-
-In the future, the settings will be managed in the GUI, so check back for updates.
+This program uses MP3 Tag and dBpoweramp, the locations for these are defined in the settings UI
 
 Select a folder containing your flac files using the browse at the top right. Ensure the metadata is correct using the Set Metadata button which will open MP3 Tag in the flac folder.
 

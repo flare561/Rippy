@@ -10,6 +10,13 @@ namespace Rippy
 {
     public static class HelperMethods
     {
+
+        /// <summary>
+        /// Runs a process and returns a task that completes when the process exits 
+        /// </summary>
+        /// <param name="fileName">Path of the executable to run</param>
+        /// <param name="arguments">Arguments to pass to the executable</param>
+        /// <returns>A task that completes at process exit</returns>
         public static Task RunProcessAsync(string fileName, string arguments)
         {
             // there is no non-generic TaskCompletionSource
@@ -31,6 +38,7 @@ namespace Rippy
 
             return tcs.Task;
         }
+
         /// <summary>
         /// Get custom value from the info dict of the torrent
         /// </summary>
