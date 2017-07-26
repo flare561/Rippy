@@ -219,7 +219,7 @@ namespace Rippy
             if (FLAC)
                 if (!(ProcessDirectory(_albumData.FLAC, "-convert_to=\"FLAC\" -compression-level-8", "flac", totalFiles))) return;
             if (FLAC16)
-                if (!(ProcessDirectory(_albumData.FLAC16, "-dspeffect1=\"Resample=-frequency={qt}44100{qt}\" -dspeffect2=\"Bit Depth=-depth={qt}16{qt}\" -convert_to=\"FLAC\" -compression-level-8", "flac", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.FLAC16, "-dspeffect1=\"Bit Depth=-depth={qt}16{qt}\" -convert_to=\"FLAC\" -compression-level-8", "flac", totalFiles))) return;
         }
 
         private void _createProgressDialog_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
