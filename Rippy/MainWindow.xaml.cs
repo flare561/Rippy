@@ -131,14 +131,19 @@ namespace Rippy
         private bool TranscodeFiles(string directory, string dbargs, int totalFiles)
         {
             var processes = new List<Process>();
-            foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()))
+            foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder, "*", SearchOption.AllDirectories).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()))
             {
                 if (_createProgressDialog.CancellationPending)
                 {
                     return false;
                 }
                 var infile = new FileInfo(file);
-                var outfile = new FileInfo(Path.Combine(directory, infile.Name.Replace(infile.Extension, (dbargs == null) ? ".flac" : ".mp3")));
+
+                var fileUri = new Uri(_albumData.FlacFolder);
+                var folderUri = new Uri(file);
+                var fileName = folderUri.LocalPath.Replace(fileUri.LocalPath, "").Replace("/", @"\");
+
+                var outfile = new FileInfo(Path.Combine(directory + fileName.Replace(infile.Extension, (dbargs == null) ? ".flac" : ".mp3")));
                 _fileNumber++;
                 int progress = (int)(100 * ((double)_fileNumber / (double)totalFiles));
                 _createProgressDialog.ReportProgress(progress, "Transcoding Files", string.Format(System.Globalization.CultureInfo.CurrentCulture, $"Transcoding {_fileNumber} / {totalFiles}"));
@@ -195,7 +200,7 @@ namespace Rippy
 
         private void _createProgressDialog_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            int fileCount = Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()).Count();
+            int fileCount = Directory.EnumerateFiles(_albumData.FlacFolder, "*", SearchOption.AllDirectories).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()).Count();
             int totalFiles = 0;
             if (MP3320)
                 totalFiles += fileCount;
@@ -256,7 +261,7 @@ namespace Rippy
         {
             try
             {
-                var file = Directory.EnumerateFiles(folder).Where(x => x.ToLower().EndsWith("flac")).FirstOrDefault();
+                var file = Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).Where(x => x.ToLower().EndsWith("flac")).FirstOrDefault();
                 if (file != null)
                 {
                     FlacFolderTbx.Background = Brushes.White;
