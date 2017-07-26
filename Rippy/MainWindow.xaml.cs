@@ -56,7 +56,6 @@ namespace Rippy
         public bool MP3V0 { get; set; } = true;
         public bool MP3V2 { get; set; } = false;
         public bool FLAC { get; set; } = false;
-        public bool FLAC24 { get; set; } = false;
         
         public MainWindow()
         {
