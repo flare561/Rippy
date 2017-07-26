@@ -213,11 +213,11 @@ namespace Rippy
             _fileNumber = 0;
 
             if (MP3320)
-                if (!(ProcessDirectory(_albumData.MP3320, "-b 320", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3320, "-b 320 -q 0", totalFiles))) return;
             if (MP3V0)
-                if (!(ProcessDirectory(_albumData.MP3V0, "-V 0", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3V0, "-V 0 -q 0", totalFiles))) return;
             if (MP3V2)
-                if (!(ProcessDirectory(_albumData.MP3V2, "-V 2", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3V2, "-V 2 -q 0", totalFiles))) return;
             if (FLAC)
                 if (!(ProcessDirectory(_albumData.FLAC, null, totalFiles))) return;
         }
