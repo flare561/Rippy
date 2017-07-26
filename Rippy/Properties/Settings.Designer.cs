@@ -82,5 +82,17 @@ namespace Rippy.Properties {
                 this["Trackers"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool CopyImages {
+            get {
+                return ((bool)(this["CopyImages"]));
+            }
+            set {
+                this["CopyImages"] = value;
+            }
+        }
     }
 }

@@ -35,7 +35,7 @@
         </Style>
     </Window.Resources>
     <Grid Margin="0,0,0,0">
-        <Button Panel.ZIndex="3" x:Name="settingsBtn" Content="Settings ⚙️" Style="{StaticResource LinkButton}" HorizontalAlignment="Right" Margin="0,6,12,0" VerticalAlignment="Top" Width="64" Click="settingsBtn_Click" />
+        <Button Panel.ZIndex="3" x:Name="settingsBtn" Content="Settings ⚙️" Style="{StaticResource LinkButton}" HorizontalAlignment="Left" Margin="440,6,0,0" VerticalAlignment="Top" Width="64" Click="settingsBtn_Click" />
         <StackPanel Panel.ZIndex="2" Name="pnlLeftMenu" Orientation="Horizontal" HorizontalAlignment="Left" Margin="-524,0,0,0" IsEnabled="False">
             <Border BorderBrush="#444444" BorderThickness="1" Width="524" Background="#777777" >
                 <Grid>
@@ -176,6 +176,7 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
+                    <CheckBox x:Name="copyImages" Content="Copy Images" IsChecked="{Binding CopyImages, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" Height="15" VerticalAlignment="Top" Margin="10,235,-10,0" Foreground="Black" HorizontalAlignment="Left" Width="522" Background="{x:Null}" BorderBrush="Black"/>
                     <Button x:Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="313,230,0,0" VerticalAlignment="Top" Width="75" Click="saveBtn_Click"/>
                 </Grid>
             </Border>
@@ -185,7 +186,7 @@
                 <RowDefinition Height="272*"/>
             </Grid.RowDefinitions>
             <Label Content="FLAC Folder" HorizontalAlignment="Left" Margin="10,10,0,0" Height="27" VerticalAlignment="Top" Width="75"/>
-            <TextBox Name="FlacFolderTbx" Margin="10,37,168,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=FlacFolder, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" TextChanged="FlacFolder_TextChanged">
+            <TextBox Name="FlacFolderTbx" Margin="10,37,168,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=FlacFolder, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" TextChanged="FlacFolder_TextChanged" Grid.RowSpan="2">
                 <TextBox.Style>
                     <Style TargetType="TextBox" xmlns:sys="clr-namespace:System;assembly=mscorlib">
                         <Style.Resources>
@@ -210,9 +211,9 @@
                 </TextBox.Style>
             </TextBox>
             <Button x:Name="browseBtn" Content="Browse" HorizontalAlignment="Right" Margin="0,37,93,0" VerticalAlignment="Top" Width="70" Height="23" Click="browseBtn_Click" Grid.RowSpan="2"/>
-            <Button x:Name="metadataBtn" Content="Set Metadata" HorizontalAlignment="Right" Margin="0,37,10,0" VerticalAlignment="Top" Width="78" Height="23" Click="metadataBtn_Click"/>
-            <Label Content="File Info" Margin="10,70,454,0" VerticalAlignment="Top"/>
-            <TextBox Margin="10,96,179,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=Artist, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+            <Button x:Name="metadataBtn" Content="Set Metadata" HorizontalAlignment="Right" Margin="0,37,13,0" VerticalAlignment="Top" Width="75" Height="23" Click="metadataBtn_Click" Grid.RowSpan="2"/>
+            <Label Content="File Info" Margin="12,70,452,0" VerticalAlignment="Top"/>
+            <TextBox Margin="11,96,178,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=Artist, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.Style>
                     <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
                         <Style.Resources>
@@ -260,7 +261,7 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <TextBox Margin="0,96,10,0" Height="23" VerticalAlignment="Top" Text="{Binding Medium, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" Width="82">
+            <TextBox Margin="0,96,14,0" Height="23" VerticalAlignment="Top" Text="{Binding Medium, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" Width="78">
                 <TextBox.Style>
                     <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
                         <Style.Resources>
@@ -284,7 +285,7 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <TextBox Margin="10,124,179,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=Album, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+            <TextBox Margin="11,124,178,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=Album, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
                 <TextBox.Style>
                     <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
                         <Style.Resources>
@@ -332,7 +333,7 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <TextBox Margin="0,124,10,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=Number, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" Width="82">
+            <TextBox Margin="0,124,14,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=Number, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Right" Width="78">
                 <TextBox.Style>
                     <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
                         <Style.Resources>
@@ -357,7 +358,7 @@
                 </TextBox.Style>
             </TextBox>
             <Label Content="Preview" HorizontalAlignment="Left" Margin="13,147,0,0" VerticalAlignment="Top"/>
-            <TextBox Margin="10,173,10,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=MP3320, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False">
+            <TextBox Margin="13,173,10,0" Height="23" VerticalAlignment="Top" Text="{Binding Path=MP3320, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="False">
                 <TextBox.Style>
                     <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
                         <Style.Resources>
@@ -382,12 +383,12 @@
                 </TextBox.Style>
             </TextBox>
             <Label Content="Tracker" HorizontalAlignment="Left" Margin="11,0,0,84" VerticalAlignment="Bottom" RenderTransformOrigin="0.558,2.439"/>
-            <ComboBox x:Name="trackersCobx" Margin="10,0,10,62" ItemsSource="{Binding Path=Trackers, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Tracker, UpdateSourceTrigger=PropertyChanged}" Height="22" VerticalAlignment="Bottom"/>
+            <ComboBox x:Name="trackersCobx" Margin="10,0,12,62" ItemsSource="{Binding Path=Trackers, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Tracker, UpdateSourceTrigger=PropertyChanged}" Grid.Row="1" Height="22" VerticalAlignment="Bottom"/>
             <CheckBox x:Name="mp3320Cbx" Content="MP3 320" HorizontalAlignment="Right" Margin="0,0,193,42" IsChecked="{Binding Path=MP3320, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom" Grid.Row="1"/>
             <CheckBox x:Name="mp3V0Cbx" Content="MP3 V0" HorizontalAlignment="Right" Margin="0,0,128,42" IsChecked="{Binding Path=MP3V0, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom" Grid.Row="1"/>
             <CheckBox x:Name="mp3V2Cbx" Content="MP3 V2" HorizontalAlignment="Right" Margin="0,0,63,42" IsChecked="{Binding Path=MP3V2, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom" Grid.Row="1"/>
             <CheckBox x:Name="flacCbx" Content="FLAC" HorizontalAlignment="Right" Margin="0,0,12,42" IsChecked="{Binding Path=FLAC, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom" Grid.Row="1"/>
-            <Button x:Name="createBtn" Content="Create" Margin="0,0,10,17" Click="createBtn_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="77"/>
+            <Button x:Name="createBtn" Content="Create" Margin="0,0,12,17" Click="createBtn_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="75" Grid.Row="1"/>
         </Grid>
     </Grid>
 </Window>

@@ -36,6 +36,18 @@ namespace Rippy
         private Semaphore _pool = new Semaphore(8, 8);
         private int _fileNumber = 0;
 
+        private string[] miscToCopy =
+        {
+            ".log",
+        };
+
+        private string[] imageExtensionsToCopy =
+        {
+            ".png",
+            ".jpg",
+            ".jpeg"
+        };
+
         //Public Class Properties
         /// <summary>
         /// 
@@ -44,7 +56,8 @@ namespace Rippy
         public bool MP3V0 { get; set; } = true;
         public bool MP3V2 { get; set; } = false;
         public bool FLAC { get; set; } = false;
-
+        public bool FLAC24 { get; set; } = false;
+        
         public MainWindow()
         {
             InitializeComponent();
@@ -74,12 +87,60 @@ namespace Rippy
         /// 
         /// </summary>
         /// <param name="directory"></param>
-        private void CopyFiles(string directory)
+        private void CopyMiscFiles(string directory)
         {
-            foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder).Where(x =>  ".log" == new FileInfo(x).Extension.ToLower()))
+            CopyFile(Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => miscToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="directory"></param>
+        private void CopyImages(string directory)
+        {
+            CopyFile(Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => imageExtensionsToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory);
+
+            foreach (var flacDirectory in Directory.EnumerateDirectories(_albumData.FlacFolder))
             {
-                File.Copy(file, Path.Combine(directory, new FileInfo(file).Name));
+                var fileUri = new Uri(_albumData.FlacFolder);
+                var folderUri = new Uri(flacDirectory);
+                var folderName = folderUri.AbsolutePath.Replace(fileUri.AbsolutePath, "").Replace("/", @"\");
+                if (!Directory.Exists(directory + folderName))
+                {
+                    Directory.CreateDirectory(directory + folderName);
+                }
+
+                CopyFile(Directory.EnumerateFiles(flacDirectory, "*", SearchOption.AllDirectories).Where(x => imageExtensionsToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory + folderName + @"\");
             }
+        }
+
+        private void CopyFile(IEnumerable<string> fromFiles, string toDirectory)
+        {
+            foreach (var file in fromFiles)
+            {
+                File.Copy(file, Path.Combine(toDirectory, new FileInfo(file).Name), true);
+            }
+        }
+
+        public static String MakeRelativePath(String fromPath, String toPath)
+        {
+            if (String.IsNullOrEmpty(fromPath)) throw new ArgumentNullException("fromPath");
+            if (String.IsNullOrEmpty(toPath)) throw new ArgumentNullException("toPath");
+
+            Uri fromUri = new Uri(fromPath);
+            Uri toUri = new Uri(toPath);
+
+            if (fromUri.Scheme != toUri.Scheme) { return toPath; } // path can't be made relative.
+
+            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            String relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            if (toUri.Scheme.Equals("file", StringComparison.InvariantCultureIgnoreCase))
+            {
+                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
+
+            return relativePath;
         }
 
         /// <summary>
@@ -145,7 +206,9 @@ namespace Rippy
         {
             CreateFolder(name);
             var directory = Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name);
-            CopyFiles(directory);
+            CopyMiscFiles(directory);
+            if (Properties.Settings.Default.CopyImages)
+                CopyImages(directory);
             if (!TranscodeFiles(directory, dbargs, totalFiles))
                 return false;
             CreateTorrent(directory,name);
