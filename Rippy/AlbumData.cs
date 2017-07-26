@@ -104,6 +104,12 @@ namespace Rippy
             { return FormatFolderName("FLAC"); }
         }
 
+        public string FLAC16
+        {
+            get
+            { return FormatFolderName("16-bit FLAC"); }
+        }
+
         private string FormatFolderName(string format)
         {
 

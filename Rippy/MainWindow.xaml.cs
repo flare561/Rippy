@@ -56,7 +56,8 @@ namespace Rippy
         public bool MP3V0 { get; set; } = true;
         public bool MP3V2 { get; set; } = false;
         public bool FLAC { get; set; } = false;
-        
+        public bool FLAC16 { get; set; } = false;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -128,7 +129,7 @@ namespace Rippy
         /// <param name="dbargs"></param>
         /// <param name="totalFiles"></param>
         /// <returns></returns>
-        private bool TranscodeFiles(string directory, string dbargs, int totalFiles)
+        private bool TranscodeFiles(string directory, string dbargs, string outputFileExtension, int totalFiles)
         {
             var processes = new List<Process>();
             foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder, "*", SearchOption.AllDirectories).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()))
@@ -143,30 +144,25 @@ namespace Rippy
                 var folderUri = new Uri(file);
                 var fileName = folderUri.LocalPath.Replace(fileUri.LocalPath, "").Replace("/", @"\");
 
-                var outfile = new FileInfo(Path.Combine(directory + fileName.Replace(infile.Extension, (dbargs == null) ? ".flac" : ".mp3")));
+                var outfile = new FileInfo(Path.Combine(directory + fileName.Replace(infile.Extension, "." + outputFileExtension)));
                 _fileNumber++;
                 int progress = (int)(100 * ((double)_fileNumber / (double)totalFiles));
                 _createProgressDialog.ReportProgress(progress, "Transcoding Files", string.Format(System.Globalization.CultureInfo.CurrentCulture, $"Transcoding {_fileNumber} / {totalFiles}"));
-                if (dbargs == null)
+
+                var command = Rippy.Properties.Settings.Default.DBPowerampLocation + $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}";
+                var convProc = new Process
                 {
-                    File.Copy(infile.FullName, outfile.FullName, true);
-                }
-                else
-                {
-                    var convProc = new Process
+                    StartInfo = new ProcessStartInfo(Rippy.Properties.Settings.Default.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}")
                     {
-                        StartInfo = new ProcessStartInfo(Rippy.Properties.Settings.Default.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" -convert_to\"mp3 (Lame)\" {dbargs}")
-                        {
-                            CreateNoWindow = true,
-                            WindowStyle = ProcessWindowStyle.Hidden
-                        },
-                        EnableRaisingEvents = true
-                    };
-                    convProc.Exited += (sender, args) => { _pool.Release(); };
-                    _pool.WaitOne();
-                    processes.Add(convProc);
-                    convProc.Start();
-                }
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    },
+                    EnableRaisingEvents = true
+                };
+                convProc.Exited += (sender, args) => { _pool.Release(); };
+                _pool.WaitOne();
+                processes.Add(convProc);
+                convProc.Start();
             }
             foreach (var proc in processes)
             {
@@ -185,14 +181,14 @@ namespace Rippy
         }
         
 
-        private bool ProcessDirectory(string name, string dbargs, int totalFiles)
+        private bool ProcessDirectory(string name, string dbargs, string outputFileExtension, int totalFiles)
         {
             CreateFolder(name);
             var directory = Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name);
             CopyMiscFiles(directory);
             if (Properties.Settings.Default.CopyImages)
                 CopyImages(directory);
-            if (!TranscodeFiles(directory, dbargs, totalFiles))
+            if (!TranscodeFiles(directory, dbargs, outputFileExtension, totalFiles))
                 return false;
             CreateTorrent(directory,name);
             return true;
@@ -210,16 +206,20 @@ namespace Rippy
                 totalFiles += fileCount;
             if (FLAC)
                 totalFiles += fileCount;
+            if (FLAC16)
+                totalFiles += fileCount;
             _fileNumber = 0;
 
             if (MP3320)
-                if (!(ProcessDirectory(_albumData.MP3320, "-b 320 -q 0", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3320, "-b 320 -q 0 -noreplaygain -convert_to\"mp3 (Lame)\"", "mp3", totalFiles))) return;
             if (MP3V0)
-                if (!(ProcessDirectory(_albumData.MP3V0, "-V 0 -q 0", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3V0, "-V 0 -q 0 -noreplaygain -convert_to\"mp3 (Lame)\"", "mp3", totalFiles))) return;
             if (MP3V2)
-                if (!(ProcessDirectory(_albumData.MP3V2, "-V 2 -q 0", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3V2, "-V 2 -q 0 -noreplaygain -convert_to\"mp3 (Lame)\"", "mp3", totalFiles))) return;
             if (FLAC)
-                if (!(ProcessDirectory(_albumData.FLAC, null, totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.FLAC, "-convert_to=\"FLAC\" -compression-level-8", "flac", totalFiles))) return;
+            if (FLAC16)
+                if (!(ProcessDirectory(_albumData.FLAC16, "-dspeffect1=\"Resample=-frequency={qt}44100{qt}\" -dspeffect2=\"Bit Depth=-depth={qt}16{qt}\" -convert_to=\"FLAC\" -compression-level-8", "flac", totalFiles))) return;
         }
 
         private void _createProgressDialog_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
