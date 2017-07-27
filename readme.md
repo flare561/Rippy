@@ -1,7 +1,7 @@
 Rippy
 =====
 
-A GUI for converting songs from flac to MP3 and creating private torrents for pass the headphones.
+A GUI for converting songs from flac to MP3 and creating private torrents for redacted.
 
 Download the latest version from [the releases page](https://github.com/flare561/Rippy/releases/)
 

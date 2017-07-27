@@ -36,6 +36,18 @@ namespace Rippy
         private Semaphore _pool = new Semaphore(8, 8);
         private int _fileNumber = 0;
 
+        private string[] miscToCopy =
+        {
+            ".log",
+        };
+
+        private string[] imageExtensionsToCopy =
+        {
+            ".png",
+            ".jpg",
+            ".jpeg"
+        };
+
         //Public Class Properties
         /// <summary>
         /// 
@@ -44,6 +56,7 @@ namespace Rippy
         public bool MP3V0 { get; set; } = true;
         public bool MP3V2 { get; set; } = false;
         public bool FLAC { get; set; } = false;
+        public bool FLAC16 { get; set; } = false;
 
         public MainWindow()
         {
@@ -74,11 +87,38 @@ namespace Rippy
         /// 
         /// </summary>
         /// <param name="directory"></param>
-        private void CopyFiles(string directory)
+        private void CopyMiscFiles(string directory)
         {
-            foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder).Where(x =>  ".log" == new FileInfo(x).Extension.ToLower()))
+            CopyFile(Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => miscToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory);
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="directory"></param>
+        private void CopyImages(string directory)
+        {
+            CopyFile(Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => imageExtensionsToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory);
+
+            foreach (var flacDirectory in Directory.EnumerateDirectories(_albumData.FlacFolder))
             {
-                File.Copy(file, Path.Combine(directory, new FileInfo(file).Name));
+                var fileUri = new Uri(_albumData.FlacFolder);
+                var folderUri = new Uri(flacDirectory);
+                var folderName = folderUri.AbsolutePath.Replace(fileUri.AbsolutePath, "").Replace("/", @"\");
+                if (!Directory.Exists(directory + folderName))
+                {
+                    Directory.CreateDirectory(directory + folderName);
+                }
+
+                CopyFile(Directory.EnumerateFiles(flacDirectory, "*", SearchOption.AllDirectories).Where(x => imageExtensionsToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory + folderName + @"\");
+            }
+        }
+
+        private void CopyFile(IEnumerable<string> fromFiles, string toDirectory)
+        {
+            foreach (var file in fromFiles)
+            {
+                File.Copy(file, Path.Combine(toDirectory, new FileInfo(file).Name), true);
             }
         }
 
@@ -89,40 +129,40 @@ namespace Rippy
         /// <param name="dbargs"></param>
         /// <param name="totalFiles"></param>
         /// <returns></returns>
-        private bool TranscodeFiles(string directory, string dbargs, int totalFiles)
+        private bool TranscodeFiles(string directory, string dbargs, string outputFileExtension, int totalFiles)
         {
             var processes = new List<Process>();
-            foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()))
+            foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder, "*", SearchOption.AllDirectories).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()))
             {
                 if (_createProgressDialog.CancellationPending)
                 {
                     return false;
                 }
                 var infile = new FileInfo(file);
-                var outfile = new FileInfo(Path.Combine(directory, infile.Name.Replace(infile.Extension, (dbargs == null) ? ".flac" : ".mp3")));
+
+                var fileUri = new Uri(_albumData.FlacFolder);
+                var folderUri = new Uri(file);
+                var fileName = folderUri.LocalPath.Replace(fileUri.LocalPath, "").Replace("/", @"\");
+
+                var outfile = new FileInfo(Path.Combine(directory + fileName.Replace(infile.Extension, "." + outputFileExtension)));
                 _fileNumber++;
                 int progress = (int)(100 * ((double)_fileNumber / (double)totalFiles));
                 _createProgressDialog.ReportProgress(progress, "Transcoding Files", string.Format(System.Globalization.CultureInfo.CurrentCulture, $"Transcoding {_fileNumber} / {totalFiles}"));
-                if (dbargs == null)
+
+                var command = Rippy.Properties.Settings.Default.DBPowerampLocation + $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}";
+                var convProc = new Process
                 {
-                    File.Copy(infile.FullName, outfile.FullName, true);
-                }
-                else
-                {
-                    var convProc = new Process
+                    StartInfo = new ProcessStartInfo(Rippy.Properties.Settings.Default.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}")
                     {
-                        StartInfo = new ProcessStartInfo(Rippy.Properties.Settings.Default.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" -convert_to\"mp3 (Lame)\" {dbargs}")
-                        {
-                            CreateNoWindow = true,
-                            WindowStyle = ProcessWindowStyle.Hidden
-                        },
-                        EnableRaisingEvents = true
-                    };
-                    convProc.Exited += (sender, args) => { _pool.Release(); };
-                    _pool.WaitOne();
-                    processes.Add(convProc);
-                    convProc.Start();
-                }
+                        CreateNoWindow = true,
+                        WindowStyle = ProcessWindowStyle.Hidden
+                    },
+                    EnableRaisingEvents = true
+                };
+                convProc.Exited += (sender, args) => { _pool.Release(); };
+                _pool.WaitOne();
+                processes.Add(convProc);
+                convProc.Start();
             }
             foreach (var proc in processes)
             {
@@ -141,12 +181,14 @@ namespace Rippy
         }
         
 
-        private bool ProcessDirectory(string name, string dbargs, int totalFiles)
+        private bool ProcessDirectory(string name, string dbargs, string outputFileExtension, int totalFiles)
         {
             CreateFolder(name);
             var directory = Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name);
-            CopyFiles(directory);
-            if (!TranscodeFiles(directory, dbargs, totalFiles))
+            CopyMiscFiles(directory);
+            if (Properties.Settings.Default.CopyImages)
+                CopyImages(directory);
+            if (!TranscodeFiles(directory, dbargs, outputFileExtension, totalFiles))
                 return false;
             CreateTorrent(directory,name);
             return true;
@@ -154,7 +196,7 @@ namespace Rippy
 
         private void _createProgressDialog_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            int fileCount = Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()).Count();
+            int fileCount = Directory.EnumerateFiles(_albumData.FlacFolder, "*", SearchOption.AllDirectories).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()).Count();
             int totalFiles = 0;
             if (MP3320)
                 totalFiles += fileCount;
@@ -164,16 +206,20 @@ namespace Rippy
                 totalFiles += fileCount;
             if (FLAC)
                 totalFiles += fileCount;
+            if (FLAC16)
+                totalFiles += fileCount;
             _fileNumber = 0;
 
             if (MP3320)
-                if (!(ProcessDirectory(_albumData.MP3320, "-b 320", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3320, "-b 320 -q 0 -noreplaygain -convert_to\"mp3 (Lame)\"", "mp3", totalFiles))) return;
             if (MP3V0)
-                if (!(ProcessDirectory(_albumData.MP3V0, "-V 0", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3V0, "-V 0 -q 0 -noreplaygain -convert_to\"mp3 (Lame)\"", "mp3", totalFiles))) return;
             if (MP3V2)
-                if (!(ProcessDirectory(_albumData.MP3V2, "-V 2", totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.MP3V2, "-V 2 -q 0 -noreplaygain -convert_to\"mp3 (Lame)\"", "mp3", totalFiles))) return;
             if (FLAC)
-                if (!(ProcessDirectory(_albumData.FLAC, null, totalFiles))) return;
+                if (!(ProcessDirectory(_albumData.FLAC, "-convert_to=\"FLAC\" -compression-level-8", "flac", totalFiles))) return;
+            if (FLAC16)
+                if (!(ProcessDirectory(_albumData.FLAC16, "-dspeffect1=\"Bit Depth=-depth={qt}16{qt}\" -convert_to=\"FLAC\" -compression-level-8", "flac", totalFiles))) return;
         }
 
         private void _createProgressDialog_RunWorkerCompleted(object sender, System.ComponentModel.RunWorkerCompletedEventArgs e)
@@ -215,7 +261,7 @@ namespace Rippy
         {
             try
             {
-                var file = Directory.EnumerateFiles(folder).Where(x => x.ToLower().EndsWith("flac")).FirstOrDefault();
+                var file = Directory.EnumerateFiles(folder, "*", SearchOption.AllDirectories).Where(x => x.ToLower().EndsWith("flac")).FirstOrDefault();
                 if (file != null)
                 {
                     FlacFolderTbx.Background = Brushes.White;
