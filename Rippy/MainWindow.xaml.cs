@@ -75,12 +75,19 @@ namespace Rippy
         /// <param name="name"></param>
         private void CreateFolder(string name)
         {
-            if (!Directory.Exists(Rippy.Properties.Settings.Default.OutputDirectory))
-                Directory.CreateDirectory(Rippy.Properties.Settings.Default.OutputDirectory);
-            if (!Directory.Exists(Rippy.Properties.Settings.Default.TorrentDirectory))
-                Directory.CreateDirectory(Rippy.Properties.Settings.Default.TorrentDirectory);
+            try
+            {
+                if (!Directory.Exists(Rippy.Properties.Settings.Default.OutputDirectory))
+                    Directory.CreateDirectory(Rippy.Properties.Settings.Default.OutputDirectory);
+                if (!Directory.Exists(Rippy.Properties.Settings.Default.TorrentDirectory))
+                    Directory.CreateDirectory(Rippy.Properties.Settings.Default.TorrentDirectory);
 
-            Directory.CreateDirectory(Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name));
+                Directory.CreateDirectory(Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name));
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured while creating folder: " + ex.Message);
+            }
         }
 
         /// <summary>
@@ -98,27 +105,41 @@ namespace Rippy
         /// <param name="directory"></param>
         private void CopyImages(string directory)
         {
-            CopyFile(Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => imageExtensionsToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory);
-
-            foreach (var flacDirectory in Directory.EnumerateDirectories(_albumData.FlacFolder))
+            try
             {
-                var fileUri = new Uri(_albumData.FlacFolder);
-                var folderUri = new Uri(flacDirectory);
-                var folderName = folderUri.AbsolutePath.Replace(fileUri.AbsolutePath, "").Replace("/", @"\");
-                if (!Directory.Exists(directory + folderName))
-                {
-                    Directory.CreateDirectory(directory + folderName);
-                }
+                CopyFile(Directory.EnumerateFiles(_albumData.FlacFolder).Where(x => imageExtensionsToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory);
 
-                CopyFile(Directory.EnumerateFiles(flacDirectory, "*", SearchOption.AllDirectories).Where(x => imageExtensionsToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory + folderName + @"\");
+                foreach (var flacDirectory in Directory.EnumerateDirectories(_albumData.FlacFolder))
+                {
+                    var fileUri = new Uri(_albumData.FlacFolder);
+                    var folderUri = new Uri(flacDirectory);
+                    var folderName = folderUri.AbsolutePath.Replace(fileUri.AbsolutePath, "").Replace("/", @"\").Replace("%20", " ").Replace(":", "-");
+                    if (!Directory.Exists(directory + folderName))
+                    {
+                        Directory.CreateDirectory(directory + folderName);
+                    }
+
+                    CopyFile(Directory.EnumerateFiles(flacDirectory, "*", SearchOption.AllDirectories).Where(x => imageExtensionsToCopy.Contains(new FileInfo(x).Extension.ToLower())), directory + folderName + @"\");
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured while copying images: " + ex.Message);
             }
         }
 
         private void CopyFile(IEnumerable<string> fromFiles, string toDirectory)
         {
-            foreach (var file in fromFiles)
+            try
             {
-                File.Copy(file, Path.Combine(toDirectory, new FileInfo(file).Name), true);
+                foreach (var file in fromFiles)
+                {
+                    File.Copy(file, Path.Combine(toDirectory, new FileInfo(file).Name), true);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occured while copying files: " + ex.Message);
             }
         }
 
@@ -131,44 +152,60 @@ namespace Rippy
         /// <returns></returns>
         private bool TranscodeFiles(string directory, string dbargs, string outputFileExtension, int totalFiles)
         {
-            var processes = new List<Process>();
-            foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder, "*", SearchOption.AllDirectories).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()))
+            try
             {
-                if (_createProgressDialog.CancellationPending)
+                var processes = new List<Process>();
+                foreach (var file in Directory.EnumerateFiles(_albumData.FlacFolder, "*", SearchOption.AllDirectories).Where(x => ".flac" == new FileInfo(x).Extension.ToLower()))
                 {
-                    return false;
-                }
-                var infile = new FileInfo(file);
-
-                var fileUri = new Uri(_albumData.FlacFolder);
-                var folderUri = new Uri(file);
-                var fileName = folderUri.LocalPath.Replace(fileUri.LocalPath, "").Replace("/", @"\");
-
-                var outfile = new FileInfo(Path.Combine(directory + fileName.Replace(infile.Extension, "." + outputFileExtension)));
-                _fileNumber++;
-                int progress = (int)(100 * ((double)_fileNumber / (double)totalFiles));
-                _createProgressDialog.ReportProgress(progress, "Transcoding Files", string.Format(System.Globalization.CultureInfo.CurrentCulture, $"Transcoding {_fileNumber} / {totalFiles}"));
-
-                var command = Rippy.Properties.Settings.Default.DBPowerampLocation + $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}";
-                var convProc = new Process
-                {
-                    StartInfo = new ProcessStartInfo(Rippy.Properties.Settings.Default.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}")
+                    if (_createProgressDialog.CancellationPending)
                     {
-                        CreateNoWindow = true,
-                        WindowStyle = ProcessWindowStyle.Hidden
-                    },
-                    EnableRaisingEvents = true
-                };
-                convProc.Exited += (sender, args) => { _pool.Release(); };
-                _pool.WaitOne();
-                processes.Add(convProc);
-                convProc.Start();
+                        return false;
+                    }
+
+                    var infile = new FileInfo(file);
+
+                    var fileUri = new Uri(_albumData.FlacFolder);
+                    var folderUri = new Uri(file);
+                    var fileName = folderUri.LocalPath.Replace(fileUri.LocalPath, "").Replace("/", @"\").Replace(":", "-");
+
+                    var outfile = new FileInfo(Path.Combine(directory + fileName.Replace(infile.Extension, "." + outputFileExtension)));
+                    _fileNumber++;
+                    int progress = (int)(100 * ((double)_fileNumber / (double)totalFiles));
+                    _createProgressDialog.ReportProgress(progress, "Transcoding Files", string.Format(System.Globalization.CultureInfo.CurrentCulture, $"Transcoding {_fileNumber} / {totalFiles}"));
+
+                    var command = Rippy.Properties.Settings.Default.DBPowerampLocation + $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}";
+                    var convProc = new Process
+                    {
+                        StartInfo = new ProcessStartInfo(Rippy.Properties.Settings.Default.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}")
+                        {
+                            CreateNoWindow = true,
+                            WindowStyle = ProcessWindowStyle.Hidden
+                        },
+                        EnableRaisingEvents = true
+                    };
+                    convProc.Exited += (sender, args) => { _pool.Release(); };
+                    convProc.ErrorDataReceived += (sender, args) => { transcodeErrorOccurred(args); _pool.Release(); };
+                    _pool.WaitOne();
+                    processes.Add(convProc);
+                    convProc.Start();
+                }
+                foreach (var proc in processes)
+                {
+                    proc.WaitForExit();
+                }
             }
-            foreach (var proc in processes)
+            catch (Exception ex)
             {
-                proc.WaitForExit();
+                MessageBox.Show("An error occured during transcoding: " + ex.Message);
+                return false;
             }
+
             return true;
+        }
+
+        private void transcodeErrorOccurred(DataReceivedEventArgs args)
+        {
+            MessageBox.Show("An error occured during transcoding: " + args.ToString());
         }
 
         private void CreateTorrent(string directory, string name)
@@ -180,9 +217,9 @@ namespace Rippy
             tc.Create(new TorrentFileSource(directory), Path.Combine(Rippy.Properties.Settings.Default.TorrentDirectory, $"{name}.torrent"));
         }
         
-
         private bool ProcessDirectory(string name, string dbargs, string outputFileExtension, int totalFiles)
         {
+            name = name.Replace(@"/", @"-").Replace(":", "-");
             CreateFolder(name);
             var directory = Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name);
             CopyMiscFiles(directory);
@@ -227,6 +264,7 @@ namespace Rippy
             mainWindow.IsEnabled = true;
             MessageBox.Show("Transcode and torrent creation complete!");
         }
+
         private void browseBtn_Click(object sender, RoutedEventArgs e)
         {
             var dialog = new Ookii.Dialogs.Wpf.VistaFolderBrowserDialog();
