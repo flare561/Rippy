@@ -179,15 +179,16 @@ namespace Rippy
                         StartInfo = new ProcessStartInfo(Rippy.Properties.Settings.Default.DBPowerampLocation, $"-infile=\"{infile.FullName}\" -outfile=\"{outfile.FullName}\" {dbargs}")
                         {
                             CreateNoWindow = true,
-                            WindowStyle = ProcessWindowStyle.Hidden
+                            WindowStyle = ProcessWindowStyle.Hidden,
                         },
-                        EnableRaisingEvents = true
+                        EnableRaisingEvents = true,
                     };
                     convProc.Exited += (sender, args) => { _pool.Release(); };
                     convProc.ErrorDataReceived += (sender, args) => { transcodeErrorOccurred(args); _pool.Release(); };
                     _pool.WaitOne();
                     processes.Add(convProc);
                     convProc.Start();
+                    convProc.PriorityClass = ProcessPriorityClass.BelowNormal;
                 }
                 foreach (var proc in processes)
                 {
