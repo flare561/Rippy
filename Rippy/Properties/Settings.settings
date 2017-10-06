@@ -17,6 +17,9 @@
     <Setting Name="Trackers" Type="System.String" Scope="User">
       <Value Profile="(Default)">https://example1.com/stuff/announce,https://example2.com/stuff2/announce</Value>
     </Setting>
+    <Setting Name="Sources" Type="System.String" Scope="User">
+      <Value Profile="(Default)">EX,EX2</Value>
+    </Setting>
     <Setting Name="CopyImages" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
