@@ -114,7 +114,7 @@ namespace Rippy
         {
 
             var space = !string.IsNullOrWhiteSpace(Publisher) && !string.IsNullOrWhiteSpace(Number) ? " " : "";
-            var pubNum = !string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"[{Publisher}{space}{Number}] " : "";
+            var pubNum = !string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"{Publisher}{space}{Number}," : "";
             var medium = !string.IsNullOrWhiteSpace(Medium) ? $"{Medium}" : "";
             return $"{Artist} - {Year} - {Album} {{{pubNum}{medium}}}[{format}]";
         }
