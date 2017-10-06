@@ -70,16 +70,32 @@ namespace Rippy
             get { return Properties.Settings.Default.Trackers.Split(',').ToList(); }
         }
 
+        public List<string> Sources
+        {
+            get { return Properties.Settings.Default.Sources.Split(',').ToList(); }
+        }
+
         public string TrackersString
         {
             get { return Rippy.Properties.Settings.Default.Trackers; }
             set { Rippy.Properties.Settings.Default.Trackers = value; OnPropertyChanged("Trackers"); OnPropertyChanged("TrackersString"); }
+        }
+        public string SourcesString
+        {
+            get { return Rippy.Properties.Settings.Default.Sources; }
+            set { Rippy.Properties.Settings.Default.Sources = value; OnPropertyChanged("Sources"); OnPropertyChanged("SourcesString"); }
         }
 
         public string Tracker
         {
             get { return _tracker; }
             set { _tracker = value; OnPropertyChanged("Tracker"); }
+        }
+
+        public string Source
+        {
+            get { return _tracker; }
+            set { _tracker = value; OnPropertyChanged("Source"); }
         }
 
         public string MP3320
