@@ -84,18 +84,18 @@ namespace Rippy
 
         public string MP3320
         {
-            get { return FormatFolderName("MP3 320"); }
+            get { return FormatFolderName("320"); }
         }
 
         public string MP3V0
         {
-            get { return FormatFolderName("MP3 V0"); }
+            get { return FormatFolderName("V0"); }
         }
 
         public string MP3V2
         {
             get
-            { return FormatFolderName("MP3 V2"); }
+            { return FormatFolderName("V2"); }
         }
 
         public string FLAC
@@ -107,16 +107,16 @@ namespace Rippy
         public string FLAC16
         {
             get
-            { return FormatFolderName("16-bit FLAC"); }
+            { return FormatFolderName("FLAC16"); }
         }
 
         private string FormatFolderName(string format)
         {
 
             var space = !string.IsNullOrWhiteSpace(Publisher) && !string.IsNullOrWhiteSpace(Number) ? " " : "";
-            var pubNum = !string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"[{Publisher}{space}{Number}] " : "";
+            var pubNum = !string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"{Publisher}{space}{Number}," : "";
             var medium = !string.IsNullOrWhiteSpace(Medium) ? $"{Medium}" : "";
-            return $"{Artist} - {Year} - {Album} {{{pubNum}{medium}}}[{format}]";
+            return $"{Artist} - {Year} - {Album} {{{pubNum} {medium}}} [{format}]";
         }
     }
 }
