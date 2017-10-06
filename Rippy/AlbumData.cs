@@ -17,6 +17,7 @@ namespace Rippy
         private string _flacFolder;
         private string _medium;
         private string _tracker;
+        private string _source;
 
         public event PropertyChangedEventHandler PropertyChanged;
         
@@ -70,10 +71,20 @@ namespace Rippy
             get { return Properties.Settings.Default.Trackers.Split(',').ToList(); }
         }
 
+        public List<string> Sources
+        {
+            get { return Properties.Settings.Default.Sources.Split(',').ToList(); }
+        }
+
         public string TrackersString
         {
             get { return Rippy.Properties.Settings.Default.Trackers; }
             set { Rippy.Properties.Settings.Default.Trackers = value; OnPropertyChanged("Trackers"); OnPropertyChanged("TrackersString"); }
+        }
+        public string SourcesString
+        {
+            get { return Rippy.Properties.Settings.Default.Sources; }
+            set { Rippy.Properties.Settings.Default.Sources = value; OnPropertyChanged("Sources"); OnPropertyChanged("SourcesString"); }
         }
 
         public string Tracker
@@ -82,20 +93,26 @@ namespace Rippy
             set { _tracker = value; OnPropertyChanged("Tracker"); }
         }
 
+        public string Source
+        {
+            get { return _source; }
+            set { _source = value; OnPropertyChanged("Source"); }
+        }
+
         public string MP3320
         {
-            get { return FormatFolderName("MP3 320"); }
+            get { return FormatFolderName("320"); }
         }
 
         public string MP3V0
         {
-            get { return FormatFolderName("MP3 V0"); }
+            get { return FormatFolderName("V0"); }
         }
 
         public string MP3V2
         {
             get
-            { return FormatFolderName("MP3 V2"); }
+            { return FormatFolderName("V2"); }
         }
 
         public string FLAC
@@ -107,16 +124,16 @@ namespace Rippy
         public string FLAC16
         {
             get
-            { return FormatFolderName("16-bit FLAC"); }
+            { return FormatFolderName("FLAC16"); }
         }
 
         private string FormatFolderName(string format)
         {
 
             var space = !string.IsNullOrWhiteSpace(Publisher) && !string.IsNullOrWhiteSpace(Number) ? " " : "";
-            var pubNum = !string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"[{Publisher}{space}{Number}] " : "";
-            var medium = !string.IsNullOrWhiteSpace(Medium) ? $"{Medium} " : "";
-            return $"{Artist} - {Album} ({Year}) {pubNum}[{medium}{format}]";
+            var pubNum = !string.IsNullOrWhiteSpace(Publisher) || !string.IsNullOrWhiteSpace(Number) ? $"{Publisher}{space}{Number}," : "";
+            var medium = !string.IsNullOrWhiteSpace(Medium) ? $"{Medium}" : "";
+            return $"{Artist} - {Year} - {Album} {{{pubNum} {medium}}} [{format}]";
         }
     }
 }

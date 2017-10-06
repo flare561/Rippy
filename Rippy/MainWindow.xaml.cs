@@ -39,6 +39,10 @@ namespace Rippy
         private string[] miscToCopy =
         {
             ".log",
+            ".m3u",
+            ".cue",
+            ".pdf",
+            ".epub"
         };
 
         private string[] imageExtensionsToCopy =
@@ -64,6 +68,7 @@ namespace Rippy
             _albumData = new AlbumData();
             DataContext = _albumData;
             _albumData.Tracker = _albumData.Trackers[0];
+            _albumData.Source = _albumData.Sources[0];
             _createProgressDialog.DoWork += _createProgressDialog_DoWork;
             _createProgressDialog.RunWorkerCompleted += _createProgressDialog_RunWorkerCompleted;
         }
@@ -214,7 +219,7 @@ namespace Rippy
             var tc = new TorrentCreator();
             tc.Private = true;
             tc.Announces.Add(new List<string>() { _albumData.Tracker });
-            tc.AddCustomInfo(new MonoTorrent.BEncoding.BEncodedString("source"), new MonoTorrent.BEncoding.BEncodedString("PTH"));
+            tc.AddCustomInfo(new MonoTorrent.BEncoding.BEncodedString("source"), new MonoTorrent.BEncoding.BEncodedString(_albumData.Source)); // add source flag
             tc.Create(new TorrentFileSource(directory), Path.Combine(Rippy.Properties.Settings.Default.TorrentDirectory, $"{name}.torrent"));
         }
         
@@ -223,7 +228,8 @@ namespace Rippy
             name = name.Replace(@"/", @"-").Replace(":", "-");
             CreateFolder(name);
             var directory = Path.Combine(Rippy.Properties.Settings.Default.OutputDirectory, name);
-            CopyMiscFiles(directory);
+            if (outputFileExtension == "flac") // Copy misc if flac only
+                CopyMiscFiles(directory);
             if (Properties.Settings.Default.CopyImages)
                 CopyImages(directory);
             if (!TranscodeFiles(directory, dbargs, outputFileExtension, totalFiles))
@@ -361,6 +367,11 @@ namespace Rippy
         private void trackersTbx_TextChanged(object sender, TextChangedEventArgs e)
         {
             trackersCobx?.GetBindingExpression(ComboBox.ItemsSourceProperty)?.UpdateSource();
+        }
+
+        private void sourcesTbx_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            sourcesCobx?.GetBindingExpression(ComboBox.ItemsSourceProperty)?.UpdateSource();
         }
     }
 }
