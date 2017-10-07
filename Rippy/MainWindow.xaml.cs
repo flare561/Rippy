@@ -214,7 +214,7 @@ namespace Rippy
             var tc = new TorrentCreator();
             tc.Private = true;
             tc.Announces.Add(new List<string>() { _albumData.Tracker });
-            tc.AddCustomInfo(new MonoTorrent.BEncoding.BEncodedString("source"), new MonoTorrent.BEncoding.BEncodedString("PTH"));
+            tc.AddCustomInfo(new MonoTorrent.BEncoding.BEncodedString("source"), new MonoTorrent.BEncoding.BEncodedString(_albumData.Source)); // add source flag
             tc.Create(new TorrentFileSource(directory), Path.Combine(Rippy.Properties.Settings.Default.TorrentDirectory, $"{name}.torrent"));
         }
         
@@ -361,6 +361,10 @@ namespace Rippy
         private void trackersTbx_TextChanged(object sender, TextChangedEventArgs e)
         {
             trackersCobx?.GetBindingExpression(ComboBox.ItemsSourceProperty)?.UpdateSource();
+        }
+        private void sourcesTbx_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            sourcesCobx?.GetBindingExpression(ComboBox.ItemsSourceProperty)?.UpdateSource();
         }
     }
 }

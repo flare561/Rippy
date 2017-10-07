@@ -82,7 +82,22 @@ namespace Rippy.Properties {
                 this["Trackers"] = value;
             }
         }
-        
+
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Source1,Source2")]
+        public string Sources
+        {
+            get
+            {
+                return ((string)(this["Sources"]));
+            }
+            set
+            {
+                this["Sources"] = value;
+            }
+        }
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]

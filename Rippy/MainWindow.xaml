@@ -150,8 +150,8 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <Label Content="Trackers" HorizontalAlignment="Left" Margin="10,172,0,0" VerticalAlignment="Top"/>
-                    <TextBox x:Name="trackersTbx" Margin="10,203,0,0" HorizontalAlignment="Left" Width="378" Height="22" VerticalAlignment="Top" Text="{Binding TrackersString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="trackersTbx_TextChanged">
+                    <Label Content="Trackers" HorizontalAlignment="Left" Margin="10,169,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="trackersTbx" Margin="10,195,0,0" HorizontalAlignment="Left" Width="378" Height="22" VerticalAlignment="Top" Text="{Binding TrackersString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="trackersTbx_TextChanged">
                         <TextBox.ToolTip>Trackers (Separate multiple trackers with a comma)</TextBox.ToolTip>
                         <TextBox.Style>
                             <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
@@ -176,8 +176,34 @@
                             </Style>
                         </TextBox.Style>
                     </TextBox>
-                    <CheckBox x:Name="copyImages" Content="Copy Images" IsChecked="{Binding CopyImages, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" Height="15" VerticalAlignment="Top" Margin="10,235,-10,0" Foreground="Black" HorizontalAlignment="Left" Width="522" Background="{x:Null}" BorderBrush="Black"/>
-                    <Button x:Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="313,230,0,0" VerticalAlignment="Top" Width="75" Click="saveBtn_Click"/>
+                    <Label Content="Sources" HorizontalAlignment="Left" Margin="10,216,0,0" VerticalAlignment="Top"/>
+                    <TextBox x:Name="sourcesTbx" Margin="10,243,0,0" HorizontalAlignment="Left" Width="378" Height="22" VerticalAlignment="Top" Text="{Binding SourcesString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="sourcesTbx_TextChanged">
+                        <TextBox.ToolTip>Trackers (Separate multiple sources with a comma)</TextBox.ToolTip>
+                        <TextBox.Style>
+                            <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
+                                <Style.Resources>
+                                    <VisualBrush x:Key="CueBannerBrush" AlignmentX="Left" AlignmentY="Center" Stretch="None" >
+                                        <VisualBrush.Visual>
+                                            <Label Content="Sources" Foreground="Gray" Background="White" Width="378" Height="23"/>
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Style.Resources>
+                                <Style.Triggers>
+                                    <Trigger Property="Text" Value="{x:Static sys:String.Empty}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="Text" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{StaticResource CueBannerBrush}" />
+                                    </Trigger>
+                                    <Trigger Property="IsKeyboardFocused" Value="True">
+                                        <Setter Property="Background" Value="White" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>
+                    <CheckBox x:Name="copyImages" Content="Copy Images" IsChecked="{Binding CopyImages, Mode=TwoWay, Source={x:Static properties:Settings.Default}, UpdateSourceTrigger=PropertyChanged}" Height="15" VerticalAlignment="Top" Margin="10,279,-10,0" Foreground="Black" HorizontalAlignment="Left" Width="522" Background="{x:Null}" BorderBrush="Black"/>
+                    <Button x:Name="saveBtn" Content="Save" HorizontalAlignment="Left" Margin="313,276,0,0" VerticalAlignment="Top" Width="75" Click="saveBtn_Click"/>
                 </Grid>
             </Border>
         </StackPanel>
@@ -382,15 +408,16 @@
                     </Style>
                 </TextBox.Style>
             </TextBox>
-            <Label Content="Tracker" HorizontalAlignment="Left" Margin="11,0,0,84" VerticalAlignment="Bottom" RenderTransformOrigin="0.558,2.439"/>
-            <ComboBox x:Name="trackersCobx" Margin="10,0,10,62" ItemsSource="{Binding Path=Trackers, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Tracker, UpdateSourceTrigger=PropertyChanged}" Height="22" VerticalAlignment="Bottom"/>
+            <Label Content="Tracker" HorizontalAlignment="Left" Margin="13,0,0,97" VerticalAlignment="Bottom" RenderTransformOrigin="0.558,2.439"/>
+            <ComboBox x:Name="trackersCobx" Margin="10,0,10,72" ItemsSource="{Binding Path=Trackers, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Tracker, UpdateSourceTrigger=PropertyChanged}" Height="22" VerticalAlignment="Bottom"/>
+            <Label Content="Source" HorizontalAlignment="Left" Margin="13,0,0,39" VerticalAlignment="Bottom" RenderTransformOrigin="0.558,2.439"/>
+            <ComboBox x:Name="sourcesCobx" Margin="62,0,365,39" ItemsSource="{Binding Path=Sources, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding Path=Source, UpdateSourceTrigger=PropertyChanged}" Height="22" VerticalAlignment="Bottom"/>
             <CheckBox x:Name="mp3320Cbx" Content="MP3 320" HorizontalAlignment="Right" Margin="0,0,279,42" IsChecked="{Binding Path=MP3320, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom"/>
             <CheckBox x:Name="mp3V0Cbx" Content="MP3 V0" HorizontalAlignment="Right" Margin="0,0,214,42" IsChecked="{Binding Path=MP3V0, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom"/>
             <CheckBox x:Name="mp3V2Cbx" Content="MP3 V2" HorizontalAlignment="Right" Margin="0,0,149,42" IsChecked="{Binding Path=MP3V2, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom"/>
             <CheckBox x:Name="flacCbx" Content="FLAC" HorizontalAlignment="Right" Margin="0,0,98,42" IsChecked="{Binding Path=FLAC, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom"/>
             <Button x:Name="createBtn" Content="Create" Margin="0,0,10,17" Click="createBtn_Click" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Right" Width="77"/>
-            <CheckBox x:Name="flacCbx_Copy" Content="16bit FLAC
-" HorizontalAlignment="Right" Margin="0,0,10,42" IsChecked="{Binding Path=FLAC16, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom" Width="83"/>
+            <CheckBox x:Name="flacCbx_Copy" Content="FLAC16" HorizontalAlignment="Right" Margin="0,0,10,42" IsChecked="{Binding Path=FLAC16, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type Window}}}" Height="15" VerticalAlignment="Bottom" Width="83"/>
         </Grid>
     </Grid>
 </Window>
