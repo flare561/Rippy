@@ -178,7 +178,7 @@
                     </TextBox>
                     <Label Content="Sources" HorizontalAlignment="Left" Margin="10,216,0,0" VerticalAlignment="Top"/>
                     <TextBox x:Name="sourcesTbx" Margin="10,243,0,0" HorizontalAlignment="Left" Width="378" Height="22" VerticalAlignment="Top" Text="{Binding SourcesString, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" TextChanged="sourcesTbx_TextChanged">
-                        <TextBox.ToolTip>Trackers (Separate multiple sources with a comma)</TextBox.ToolTip>
+                        <TextBox.ToolTip>Sources (Separate multiple sources with a comma)</TextBox.ToolTip>
                         <TextBox.Style>
                             <Style xmlns:sys="clr-namespace:System;assembly=mscorlib" TargetType="{x:Type TextBox}">
                                 <Style.Resources>
