@@ -64,6 +64,7 @@ namespace Rippy
             _albumData = new AlbumData();
             DataContext = _albumData;
             _albumData.Tracker = _albumData.Trackers[0];
+            _albumData.Source = _albumData.Sources[0];
             _createProgressDialog.DoWork += _createProgressDialog_DoWork;
             _createProgressDialog.RunWorkerCompleted += _createProgressDialog_RunWorkerCompleted;
         }
